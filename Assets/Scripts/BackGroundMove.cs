@@ -23,6 +23,6 @@ public class BackGroundMove : MonoBehaviour
         h = Input.GetAxisRaw("Horizontal");
         v = Input.GetAxisRaw("Vertical");
 
-        mat.mainTextureOffset += new Vector2(h, v).normalized * PlayerMove.Instance.Speed * Time.deltaTime;
+        mat.mainTextureOffset += new Vector2(h, v).normalized * (PlayerMove.Instance.Speed/2) * Time.deltaTime;
     }
 }

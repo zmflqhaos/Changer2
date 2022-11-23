@@ -5,12 +5,13 @@ using UnityEngine;
 public class PlayerMove : MonoSingleton<PlayerMove>
 {
     [SerializeField] private float speed;
-    [SerializeField] private Transform playerRotation;
+    [SerializeField] private Transform playerTrs;
     [SerializeField] private float attackDelay;
-    private float currentAttackDelay;
+    [SerializeField] private string bulletName;
 
     public float Speed { get; set; }
 
+    private float currentAttackDelay;
     private float h, v;
 
     private void Awake()
@@ -34,7 +35,7 @@ public class PlayerMove : MonoSingleton<PlayerMove>
 
         if(moveTo.x!=0||moveTo.y!=0)
         {
-            playerRotation.rotation = Quaternion.FromToRotation(Vector3.up, moveTo);
+            playerTrs.rotation = Quaternion.FromToRotation(Vector3.up, moveTo);
             transform.position += moveTo * Speed * Time.deltaTime;
         }
     }
@@ -44,7 +45,8 @@ public class PlayerMove : MonoSingleton<PlayerMove>
         if(Input.GetKey(KeyCode.Space)&&currentAttackDelay<=0)
         {
             currentAttackDelay = attackDelay;
-            Debug.Log("АјАн!");
+            var bullet = PoolManager.Instance.GetPoolObject(bulletName);
+            bullet.transform.SetPositionAndRotation(playerTrs.position, playerTrs.rotation);
         }
     }
 
