@@ -11,19 +11,29 @@ public class PlayerMove : MonoSingleton<PlayerMove>
 
     public float Speed { get; set; }
 
+    private Camera mainCam;
     private float currentAttackDelay;
     private float h, v;
 
     private void Awake()
     {
+        mainCam = Camera.main;
         Speed = speed;
     }
 
     private void Update()
     {
+        Rotate();
         Move();
         Attack();
         Timer();
+    }
+
+    private void Rotate()
+    {
+        Vector3 mouse = mainCam.ScreenToWorldPoint(Input.mousePosition);
+        float angle = Mathf.Atan2(mouse.y - transform.position.y, mouse.x - transform.position.x) * Mathf.Rad2Deg;
+        playerTrs.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
     }
 
     private void Move()
@@ -35,14 +45,13 @@ public class PlayerMove : MonoSingleton<PlayerMove>
 
         if(moveTo.x!=0||moveTo.y!=0)
         {
-            playerTrs.rotation = Quaternion.FromToRotation(Vector3.up, moveTo);
             transform.position += moveTo * Speed * Time.deltaTime;
         }
     }
 
     private void Attack()
     {
-        if(Input.GetKey(KeyCode.Space)&&currentAttackDelay<=0)
+        if(Input.GetMouseButton(0)&&currentAttackDelay<=0)
         {
             currentAttackDelay = attackDelay;
             var bullet = PoolManager.Instance.GetPoolObject(bulletName);
