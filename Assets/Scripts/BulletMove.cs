@@ -5,10 +5,11 @@ using UnityEngine;
 public class BulletMove : MonoBehaviour
 {
     [SerializeField] private float speed;
+    [SerializeField] private float deleteTime;
 
     private void OnEnable()
     {
-        Invoke("Pooling", 2f);
+        Invoke("Pooling", deleteTime);
     }
 
     void Update()

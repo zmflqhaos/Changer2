@@ -4,18 +4,32 @@ using UnityEngine;
 
 public class EnemyMove : MonoBehaviour
 {
+    [SerializeField] Sprite hitSprite;
+    [SerializeField] Sprite defaultSprite;
     [SerializeField] float speed;
+    [SerializeField] int hp;
     private Transform player;
+    private SpriteRenderer spriteRenderer;
     private Vector3 dir;
 
     private void Start()
     {
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         player = FindObjectOfType<PlayerMove>().transform;
     }
 
     private void Update()
     {
         MoveToPlayer();
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "bullet")
+        {
+            if (!Die())
+                StartCoroutine(Flash());
+        }
     }
 
     private void MoveToPlayer()
@@ -28,8 +42,26 @@ public class EnemyMove : MonoBehaviour
         transform.rotation = Quaternion.AngleAxis(angle + 90, Vector3.forward);
     }
 
+    private bool Die()
+    {
+        hp--;
+        if (hp <= 0)
+        {
+            Pooling();
+            return true;
+        }
+        return false;
+    }
+
     private void Pooling()
     {
         PoolManager.Instance.Push(gameObject);
+    }
+
+    private IEnumerator Flash()
+    {
+        spriteRenderer.sprite = hitSprite;
+        yield return new WaitForSeconds(0.1f);
+        spriteRenderer.sprite = defaultSprite;
     }
 }
