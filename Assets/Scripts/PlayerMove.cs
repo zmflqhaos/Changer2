@@ -5,12 +5,15 @@ using UnityEngine;
 public class PlayerMove : MonoSingleton<PlayerMove>
 {
     [SerializeField] private float speed;
-    [SerializeField] private Transform playerTrs;
+    [SerializeField] private SpriteRenderer playerSprite;
     [SerializeField] private float attackDelay;
     [SerializeField] private string bulletName;
+    [SerializeField] private int maxHp;
 
     public float Speed { get; set; }
 
+    private bool isInvinsible;
+    private int hp;
     private Camera mainCam;
     private float currentAttackDelay;
     private float h, v;
@@ -19,6 +22,7 @@ public class PlayerMove : MonoSingleton<PlayerMove>
     {
         mainCam = Camera.main;
         Speed = speed;
+        hp = maxHp;
     }
 
     private void Update()
@@ -33,7 +37,7 @@ public class PlayerMove : MonoSingleton<PlayerMove>
     {
         Vector3 mouse = mainCam.ScreenToWorldPoint(Input.mousePosition);
         float angle = Mathf.Atan2(mouse.y - transform.position.y, mouse.x - transform.position.x) * Mathf.Rad2Deg;
-        playerTrs.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
+        playerSprite.transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
     }
 
     private void Move()
@@ -55,7 +59,7 @@ public class PlayerMove : MonoSingleton<PlayerMove>
         {
             currentAttackDelay = attackDelay;
             var bullet = PoolManager.Instance.GetPoolObject(bulletName);
-            bullet.transform.SetPositionAndRotation(playerTrs.position, playerTrs.rotation);
+            bullet.transform.SetPositionAndRotation(transform.position, playerSprite.transform.rotation);
         }
     }
 
@@ -69,5 +73,25 @@ public class PlayerMove : MonoSingleton<PlayerMove>
         {
             currentAttackDelay = 0;
         }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag != "enemy" || isInvinsible) return;
+        StartCoroutine(PlayerHit());
+    }
+
+    private IEnumerator PlayerHit()
+    {
+        hp--;
+        isInvinsible = true;
+        for (int i=0; i<3; i++)
+        {
+            playerSprite.color = new Color(0, 0, 0, 0);
+            yield return new WaitForSeconds(0.1f);
+            playerSprite.color = new Color(255, 255, 255, 255);
+            yield return new WaitForSeconds(0.1f);
+        }
+        isInvinsible = false;
     }
 }

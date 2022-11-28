@@ -7,7 +7,8 @@ public class EnemyMove : MonoBehaviour
     [SerializeField] Sprite hitSprite;
     [SerializeField] Sprite defaultSprite;
     [SerializeField] float speed;
-    [SerializeField] int hp;
+    [SerializeField] int maxHp;
+    private int hp;
     private Transform player;
     private SpriteRenderer spriteRenderer;
     private Vector3 dir;
@@ -16,6 +17,7 @@ public class EnemyMove : MonoBehaviour
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         player = FindObjectOfType<PlayerMove>().transform;
+        hp = maxHp;
     }
 
     private void Update()
@@ -27,8 +29,12 @@ public class EnemyMove : MonoBehaviour
     {
         if (collision.tag == "bullet")
         {
-            if (!Die())
-                StartCoroutine(Flash());
+            if (!Die()) StartCoroutine(Flash());
+        }
+        else if(collision.tag == "Player")
+        {
+            hp = 0;
+            Die();
         }
     }
 
@@ -55,6 +61,9 @@ public class EnemyMove : MonoBehaviour
 
     private void Pooling()
     {
+        StopAllCoroutines();
+        hp = maxHp;
+        spriteRenderer.sprite = defaultSprite;
         PoolManager.Instance.Push(gameObject);
     }
 

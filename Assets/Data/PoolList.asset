@@ -16,3 +16,6 @@ MonoBehaviour:
   - name: PlayerBullet
     gameObject: {fileID: 8451006183452538028, guid: 65dbaf8df19adc744a923b4ec205024a, type: 3}
     defaultCount: 10
+  - name: Enemy1
+    gameObject: {fileID: 4195744393153845715, guid: 0b6bc366cb2e1784fb9bf175d39d6e81, type: 3}
+    defaultCount: 10
