@@ -1,16 +1,10 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-[CreateAssetMenu(menuName = "SO/PoolList")]
-public class PoolList : ScriptableObject
-{
-    public PoolObject[] poolObjects;
-}
+using System;
 
 [Serializable]
-public class PoolObject
+public class PoolItem
 {
     public string name;
     public GameObject gameObject;

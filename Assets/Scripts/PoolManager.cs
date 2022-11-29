@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PoolManager : MonoSingleton<PoolManager>
 {
-    [SerializeField] private PoolList poolList;
+    [SerializeField] private PoolItem[] poolList;
 
     Dictionary<string, GameObject> poolingList = new Dictionary<string, GameObject>();
 
@@ -13,7 +13,7 @@ public class PoolManager : MonoSingleton<PoolManager>
     private void Awake()
     {
         GameObject poolObject;
-        foreach (PoolObject pool in poolList.poolObjects)
+        foreach (PoolItem pool in poolList)
         {
             poolingList.Add(pool.name, pool.gameObject);
             for(int i=0; i<pool.defaultCount; i++)
@@ -43,5 +43,15 @@ public class PoolManager : MonoSingleton<PoolManager>
     {
         pushObject.SetActive(false);
         pushObject.transform.SetParent(gameObject.transform);
+    }
+
+    public void PushAll()
+    {
+        PoolObject[] poolObjects = FindObjectsOfType<PoolObject>();
+
+        foreach(PoolObject pool in poolObjects)
+        {
+            pool.Pooling();
+        }
     }
 }

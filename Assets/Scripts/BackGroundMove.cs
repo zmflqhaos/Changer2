@@ -15,6 +15,7 @@ public class BackGroundMove : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.Instance.IsGameOver) return;
         BackGroundMoving();
     }
 

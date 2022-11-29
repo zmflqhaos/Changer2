@@ -6,21 +6,29 @@ public class EnemySpawner : MonoBehaviour
 {
     [SerializeField] Transform[] spawnPoints;
     [SerializeField] string enemyName;
-    private void Start()
+
+    private float timer;
+    private int rand;
+    private GameObject enemy;
+
+    private void Update()
     {
-        StartCoroutine(EnemySpawn());
+        if(GameManager.Instance.IsGameOver) return;
+        EnemySpawn();
+        Timer();
     }
 
-    private IEnumerator EnemySpawn()
+    private void EnemySpawn()
     {
-        int rand;
-        GameObject enemy;
-        while(true)
-        {
-            rand = Random.Range(0, spawnPoints.Length);
-            enemy = PoolManager.Instance.GetPoolObject(enemyName);
-            enemy.transform.SetPositionAndRotation(spawnPoints[rand].position, Quaternion.identity);
-            yield return new WaitForSeconds(0.5f);
-        }
+        if (timer <= 0.5f) return;
+        rand = Random.Range(0, spawnPoints.Length);
+        enemy = PoolManager.Instance.GetPoolObject(enemyName);
+        enemy.transform.SetPositionAndRotation(spawnPoints[rand].position, Quaternion.identity);
+        timer = 0;
+    }
+
+    private void Timer()
+    {
+        timer += Time.deltaTime;
     }
 }

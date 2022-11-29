@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BulletMove : MonoBehaviour
+public class BulletMove : PoolObject
 {
     [SerializeField] private float speed;
     [SerializeField] private float deleteTime;
@@ -14,6 +14,7 @@ public class BulletMove : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.Instance.IsGameOver) return;
         Move();
     }
 
@@ -22,7 +23,7 @@ public class BulletMove : MonoBehaviour
         transform.position += transform.up * speed * Time.deltaTime;
     }
 
-    private void Pooling()
+    public override void Pooling()
     {
         PoolManager.Instance.Push(gameObject);
     }

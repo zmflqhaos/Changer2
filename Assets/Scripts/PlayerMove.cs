@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMove : MonoSingleton<PlayerMove>
+public class PlayerMove : MonoBehaviour
 {
     [SerializeField] private float speed;
     [SerializeField] private SpriteRenderer playerSprite;
@@ -27,6 +27,7 @@ public class PlayerMove : MonoSingleton<PlayerMove>
 
     private void Update()
     {
+        if(GameManager.Instance.IsGameOver) return;
         Rotate();
         Move();
         Attack();
@@ -47,7 +48,7 @@ public class PlayerMove : MonoSingleton<PlayerMove>
 
         Vector3 moveTo = new Vector3(h, v).normalized;
 
-        if(moveTo.x!=0||moveTo.y!=0)
+        if (moveTo.x != 0 || moveTo.y != 0)
         {
             transform.position += moveTo * Speed * Time.deltaTime;
         }
@@ -55,7 +56,7 @@ public class PlayerMove : MonoSingleton<PlayerMove>
 
     private void Attack()
     {
-        if(Input.GetMouseButton(0)&&currentAttackDelay<=0)
+        if (Input.GetMouseButton(0) && currentAttackDelay <= 0)
         {
             currentAttackDelay = attackDelay;
             var bullet = PoolManager.Instance.GetPoolObject(bulletName);
@@ -65,11 +66,11 @@ public class PlayerMove : MonoSingleton<PlayerMove>
 
     private void Timer()
     {
-        if(currentAttackDelay>0)
+        if (currentAttackDelay > 0)
         {
             currentAttackDelay -= Time.deltaTime;
         }
-        if(currentAttackDelay<0)
+        if (currentAttackDelay < 0)
         {
             currentAttackDelay = 0;
         }
@@ -84,14 +85,28 @@ public class PlayerMove : MonoSingleton<PlayerMove>
     private IEnumerator PlayerHit()
     {
         hp--;
-        isInvinsible = true;
-        for (int i=0; i<3; i++)
+        if (hp <= 0) Die();
+        else
         {
-            playerSprite.color = new Color(0, 0, 0, 0);
-            yield return new WaitForSeconds(0.1f);
-            playerSprite.color = new Color(255, 255, 255, 255);
-            yield return new WaitForSeconds(0.1f);
+            isInvinsible = true;
+            for (int i = 0; i < 3; i++)
+            {
+                playerSprite.color = new Color(0, 0, 0, 0);
+                yield return new WaitForSeconds(0.1f);
+                playerSprite.color = new Color(255, 255, 255, 255);
+                yield return new WaitForSeconds(0.1f);
+            }
+            isInvinsible = false;
         }
-        isInvinsible = false;
+    }
+
+    private void Die()
+    {
+        GameManager.Instance.GameOver();
+    }
+
+    public void ReSetting()
+    {
+        hp = maxHp;
     }
 }

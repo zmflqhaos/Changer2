@@ -2,12 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyMove : MonoBehaviour
+public class EnemyMove : PoolObject
 {
     [SerializeField] Sprite hitSprite;
     [SerializeField] Sprite defaultSprite;
     [SerializeField] float speed;
     [SerializeField] int maxHp;
+
     private int hp;
     private Transform player;
     private SpriteRenderer spriteRenderer;
@@ -22,6 +23,7 @@ public class EnemyMove : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.Instance.IsGameOver) return;
         MoveToPlayer();
     }
 
@@ -29,7 +31,10 @@ public class EnemyMove : MonoBehaviour
     {
         if (collision.tag == "bullet")
         {
-            if (!Die()) StartCoroutine(Flash());
+            if (!Die())
+            {
+                StartCoroutine(Flash());
+            }
         }
         else if(collision.tag == "Player")
         {
@@ -59,7 +64,7 @@ public class EnemyMove : MonoBehaviour
         return false;
     }
 
-    private void Pooling()
+    public override void Pooling()
     {
         StopAllCoroutines();
         hp = maxHp;
