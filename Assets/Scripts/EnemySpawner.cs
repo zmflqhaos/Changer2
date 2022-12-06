@@ -6,6 +6,7 @@ public class EnemySpawner : MonoBehaviour
 {
     [SerializeField] Transform[] spawnPoints;
     [SerializeField] string enemyName;
+    [SerializeField] float spawnCool;
 
     private float timer;
     private int rand;
@@ -20,7 +21,7 @@ public class EnemySpawner : MonoBehaviour
 
     private void EnemySpawn()
     {
-        if (timer <= 0.5f) return;
+        if (timer <= spawnCool) return;
         rand = Random.Range(0, spawnPoints.Length);
         enemy = PoolManager.Instance.GetPoolObject(enemyName);
         enemy.transform.SetPositionAndRotation(spawnPoints[rand].position, Quaternion.identity);
